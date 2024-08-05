@@ -1,0 +1,7 @@
+{
+	"editor.codeActionsOnSave": {
+		"source.organizeImports.biome": true,
+		"quickfix.biome": true
+	},
+	"editor.defaultFormatter": "biomejs.biome"
+}
