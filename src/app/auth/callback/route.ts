@@ -2,18 +2,31 @@ import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-	// The `/auth/callback` route is required for the server-side auth flow implemented
-	// by the SSR package. It exchanges an auth code for the user's session.
-	// https://supabase.com/docs/guides/auth/server-side/nextjs
-	const requestUrl = new URL(request.url);
-	const code = requestUrl.searchParams.get("code");
-	const origin = requestUrl.origin;
+	const { searchParams, origin } = new URL(request.url);
+	const code = searchParams.get("code");
+	const next = searchParams.get("next") ?? "/";
 
-	if (code) {
-		const supabase = createClient();
-		await supabase.auth.exchangeCodeForSession(code);
+	if (!code) {
+		return NextResponse.redirect(`${origin}/protected`);
 	}
 
-	// URL to redirect to after sign up process completes
-	return NextResponse.redirect(`${origin}/protected`);
+	const supabase = createClient();
+	const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+	if (error) {
+		return NextResponse.redirect(`${origin}/protected`);
+	}
+
+	const forwardedHost = request.headers.get("x-forwarded-host");
+	const isLocalEnv = process.env.NODE_ENV === "development";
+
+	if (isLocalEnv) {
+		return NextResponse.redirect(`${origin}${next}`);
+	}
+
+	if (forwardedHost) {
+		return NextResponse.redirect(`https://${forwardedHost}${next}`);
+	}
+
+	return NextResponse.redirect(`${origin}${next}`);
 }
