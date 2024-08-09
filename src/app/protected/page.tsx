@@ -1,4 +1,4 @@
-import { AuthButton } from "@/components/auth-button";
+import { signOut } from "@/actions/auth";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -20,11 +20,10 @@ export default async function ProtectedPage() {
 					This is a protected page that you can only see as an authenticated
 					user
 				</div>
-				<nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-					<div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-						<AuthButton />
-					</div>
-				</nav>
+				<div>{user.email}</div>
+				<form action={signOut}>
+					<button type="submit">ログアウト</button>
+				</form>
 			</div>
 		</div>
 	);
