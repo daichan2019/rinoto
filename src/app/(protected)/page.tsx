@@ -1,8 +1,17 @@
 import { signOut } from '@/actions/auth';
 import { createClient } from '@/utils/supabase/server';
+import type { PresetAudio } from '@prisma/client';
 import { redirect } from 'next/navigation';
 
-export default async function ProtectedPage() {
+async function getPresetAudios(): Promise<PresetAudio[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/preset-audios`, { next: { revalidate: 1 } });
+  if (!res.ok) {
+    throw new Error('Failed to fetch preset audios');
+  }
+  return res.json();
+}
+
+export default async function Page(): Promise<JSX.Element> {
   const supabase = createClient();
 
   const {
@@ -13,12 +22,10 @@ export default async function ProtectedPage() {
     return redirect('/login');
   }
 
+  const presetAudios = await getPresetAudios();
+
   return (
     <div className="grid min-h-screen grid-rows-[auto,1fr,auto] bg-stone-50">
-      <header className="border-stone-200 border-b bg-white p-4 shadow-sm">
-        <h1 className="font-semibold text-2xl text-stone-800">Rinoto</h1>
-      </header>
-
       <main className="grid place-items-center p-4">
         <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
           <h2 className="mb-4 font-medium text-stone-800 text-xl">マイページ</h2>
@@ -34,12 +41,21 @@ export default async function ProtectedPage() {
               ログアウト
             </button>
           </form>
+          {presetAudios.map(({ id, name, path, duration }) => (
+            <div key={id} className="rounded bg-white p-4 shadow">
+              <h2 className="font-semibold text-lg">{name}</h2>
+              <p>Duration: {duration} seconds</p>
+              <audio
+                controls
+                src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${path}`}
+                className="mt-2 w-full"
+              >
+                <track kind="captions" src="captions.vtt" label="Japanese" />
+              </audio>
+            </div>
+          ))}
         </div>
       </main>
-
-      <footer className="border-stone-200 border-t bg-white p-4 text-center text-stone-500">
-        <p>&copy; 2023 Rinoto. All rights reserved.</p>
-      </footer>
     </div>
   );
 }
