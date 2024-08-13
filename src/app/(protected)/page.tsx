@@ -41,10 +41,9 @@ export default async function Page(): Promise<JSX.Element> {
               ログアウト
             </button>
           </form>
-          {presetAudios.map(({ id, name, path, duration }) => (
+          {presetAudios.map(({ id, name, path }) => (
             <div key={id} className="rounded bg-white p-4 shadow">
               <h2 className="font-semibold text-lg">{name}</h2>
-              <p>Duration: {duration} seconds</p>
               <audio
                 controls
                 src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${path}`}
