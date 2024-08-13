@@ -1,4 +1,5 @@
 import { signOut } from '@/actions/auth';
+import Header from '@/components/header';
 import { createClient } from '@/lib/supabase/server';
 import type { PresetAudio } from '@prisma/client';
 import { redirect } from 'next/navigation';
@@ -26,6 +27,7 @@ export default async function Page(): Promise<JSX.Element> {
 
   return (
     <div className="grid min-h-screen grid-rows-[auto,1fr,auto] bg-stone-50">
+      <Header />
       <main className="grid place-items-center p-4">
         <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
           <h2 className="mb-4 font-medium text-stone-800 text-xl">マイページ</h2>
