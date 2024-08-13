@@ -1,5 +1,5 @@
 import { signOut } from '@/actions/auth';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import type { PresetAudio } from '@prisma/client';
 import { redirect } from 'next/navigation';
 
