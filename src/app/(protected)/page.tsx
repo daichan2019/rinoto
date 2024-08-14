@@ -31,9 +31,6 @@ export default async function Page(): Promise<JSX.Element> {
       <main className="grid place-items-center p-4">
         <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
           <h2 className="mb-4 font-medium text-stone-800 text-xl">マイページ</h2>
-          <p className="mb-4 text-stone-600">
-            ようこそ、<span className="font-medium">{user.email}</span> さん
-          </p>
           <p className="mb-8 text-sm text-stone-500">ここはあなたの専用ページです。ゆっくりお過ごしください。</p>
           <form action={signOut}>
             <button
