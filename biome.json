@@ -1,20 +1,22 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
   "organizeImports": {
     "enabled": true
   },
   "linter": {
     "enabled": true,
     "rules": {
+      "recommended": true,
       "correctness": {
         "noUnusedImports": "error",
         "noUnusedVariables": "error"
       },
       "suspicious": {
-        "noRedundantUseStrict": "error"
+        "noRedundantUseStrict": "error",
+        "noConsoleLog": "error"
       },
       "nursery": {
-        "useSortedClasses": "error"
+        "useSortedClasses": "error",
+        "noRestrictedImports": "error"
       },
       "complexity": {
         "noUselessConstructor": "error",
@@ -28,7 +30,8 @@
         "useBlockStatements": "error",
         "useShorthandArrayType": "error",
         "useSingleCaseStatement": "error",
-        "useTemplate": "error"
+        "useTemplate": "error",
+        "noParameterProperties": "error"
       }
     }
   },

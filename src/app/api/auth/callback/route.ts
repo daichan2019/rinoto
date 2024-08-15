@@ -39,7 +39,6 @@ export async function GET(request: Request) {
           updatedAt: new Date(),
         },
       });
-      console.log('User information updated:', user.id);
     } else {
       user = await prisma.user.create({
         data: {
