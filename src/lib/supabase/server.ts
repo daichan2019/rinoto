@@ -17,10 +17,11 @@ export function createClient() {
             for (const { name, value, options } of cookiesToSet) {
               cookieStore.set(name, value, options);
             }
-          } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
+          } catch (error) {
+            console.error('Failed to set cookies in Server Component:', error);
+            throw new Error(
+              'Failed to set cookies in Server Component. This may indicate an issue with server-side rendering.',
+            );
           }
         },
       },

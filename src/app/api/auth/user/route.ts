@@ -5,18 +5,18 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const supabase = createClient();
   const {
-    data: { session },
+    data: { user: supabaseUser },
     error,
-  } = await supabase.auth.getSession();
+  } = await supabase.auth.getUser();
 
-  if (error || !session) {
+  if (error || !supabaseUser) {
     console.error('Error fetching user:', error);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+      where: { id: supabaseUser.id },
       select: {
         id: true,
         email: true,

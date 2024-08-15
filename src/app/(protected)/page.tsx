@@ -2,14 +2,34 @@ import { signOut } from '@/actions/auth';
 import Header from '@/components/header';
 import { createClient } from '@/lib/supabase/server';
 import type { PresetAudio } from '@prisma/client';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 async function getPresetAudios(): Promise<PresetAudio[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/preset-audios`, { next: { revalidate: 1 } });
-  if (!res.ok) {
-    throw new Error('Failed to fetch preset audios');
+  try {
+    const headersList = headers();
+    const protocol = headersList.get('x-forwarded-proto') || 'http';
+    const host = headersList.get('x-forwarded-host') || headersList.get('host') || '';
+    const baseUrl = `${protocol}://${host}`;
+    const res = await fetch(`${baseUrl}/api/preset-audios`, {
+      next: { revalidate: 1 },
+      headers: {
+        Cookie: headersList.get('cookie') || '',
+      },
+    });
+
+    if (!res.ok) {
+      if (res.status === 401) {
+        return [];
+      }
+      throw new Error(`Failed to fetch preset audios: ${res.status}`);
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error fetching preset audios:', error);
+    return [];
   }
-  return res.json();
 }
 
 export default async function Page(): Promise<JSX.Element> {
