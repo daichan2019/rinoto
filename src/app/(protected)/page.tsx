@@ -1,4 +1,5 @@
 import { signOut } from '@/actions/auth';
+import CustomAudioCreator from '@/components/custom-audio-creator';
 import Header from '@/components/header';
 import { createClient } from '@/lib/supabase/server';
 import type { PresetAudio } from '@prisma/client';
@@ -49,7 +50,7 @@ export default async function Page(): Promise<JSX.Element> {
     <div className="grid min-h-screen grid-rows-[auto,1fr,auto] bg-stone-50">
       <Header />
       <main className="grid place-items-center p-4">
-        <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+        <div className="w-full max-w-4xl rounded-lg bg-white p-8 shadow-md">
           <h2 className="mb-4 font-medium text-stone-800 text-xl">マイページ</h2>
           <p className="mb-8 text-sm text-stone-500">ここはあなたの専用ページです。ゆっくりお過ごしください。</p>
           <form action={signOut}>
@@ -60,18 +61,21 @@ export default async function Page(): Promise<JSX.Element> {
               ログアウト
             </button>
           </form>
-          {presetAudios.map(({ id, name, path }) => (
-            <div key={id} className="rounded bg-white p-4 shadow">
-              <h2 className="font-semibold text-lg">{name}</h2>
-              <audio
-                controls
-                src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${path}`}
-                className="mt-2 w-full"
-              >
-                <track kind="captions" src="captions.vtt" label="Japanese" />
-              </audio>
-            </div>
-          ))}
+          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+            {presetAudios.map(({ id, name, path }) => (
+              <div key={id} className="rounded bg-white p-4 shadow">
+                <h2 className="font-semibold text-lg">{name}</h2>
+                <audio
+                  controls
+                  src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${path}`}
+                  className="mt-2 w-full"
+                >
+                  <track kind="captions" src="captions.vtt" label="Japanese" />
+                </audio>
+              </div>
+            ))}
+          </div>
+          <CustomAudioCreator presetAudios={presetAudios} userId={user.id} />
         </div>
       </main>
     </div>
