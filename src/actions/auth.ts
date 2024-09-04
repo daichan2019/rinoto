@@ -18,12 +18,12 @@ export async function signInWithGoogle() {
 
   if (error) {
     console.error('Error during Google sign-in:', error.message);
-    redirect('/error?message=Authentication failed');
+    redirect('/error?message=authentication-failed');
   }
 
   if (!url) {
     console.error('No URL returned from signInWithOAuth');
-    redirect('/error?message=Authentication failed');
+    redirect('/error?message=authentication-failed');
   }
 
   redirect(url);

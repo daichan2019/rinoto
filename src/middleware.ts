@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
     }
 
     if (error) {
-      console.error('Authentication is failed', error);
+      console.error('Authentication failed', error);
       return NextResponse.redirect(new URL('/login', request.url));
     }
 
