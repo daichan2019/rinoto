@@ -9,7 +9,7 @@
     "lint": "npx @biomejs/biome lint .",
     "format": "npx @biomejs/biome check --write --unsafe .",
     "prepare": "husky",
-    "prisma:migrate": "./node_modules/.bin/dotenv -e .env.local -- npx prisma migrate dev --name init"
+    "prisma:migrate:dev": "./node_modules/.bin/dotenv -e .env.local -- npx prisma migrate dev --name init"
   },
   "dependencies": {
     "@biomejs/biome": "1.8.3",
