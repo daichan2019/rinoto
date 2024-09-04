@@ -1,3 +1,4 @@
+import { baseUrl } from '@/lib/baseUrl';
 import type { User } from '@prisma/client';
 import { headers } from 'next/headers';
 import Link from 'next/link';
@@ -5,9 +6,6 @@ import Link from 'next/link';
 async function getUser(): Promise<User | null> {
   try {
     const headersList = headers();
-    const protocol = headersList.get('x-forwarded-proto') || 'http';
-    const host = headersList.get('x-forwarded-host') || headersList.get('host') || '';
-    const baseUrl = `${protocol}://${host}`;
 
     const res = await fetch(`${baseUrl}/api/auth/user`, {
       cache: 'no-store',
@@ -30,7 +28,7 @@ async function getUser(): Promise<User | null> {
   }
 }
 
-export default async function Header(): Promise<JSX.Element> {
+export async function Header(): Promise<JSX.Element> {
   const user = await getUser();
 
   return (
