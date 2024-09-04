@@ -1,9 +1,11 @@
-import { baseUrl } from '@/lib/baseUrl';
 import type { PresetAudio } from '@prisma/client';
 import { headers } from 'next/headers';
 
 async function getPresetAudios(): Promise<PresetAudio[]> {
   const headersList = headers();
+  const protocol = headersList.get('x-forwarded-proto') || 'http';
+  const host = headersList.get('x-forwarded-host') || headersList.get('host') || '';
+  const baseUrl = `${protocol}://${host}`;
   try {
     const res = await fetch(`${baseUrl}/api/preset-audios`, {
       next: { revalidate: 1 },
