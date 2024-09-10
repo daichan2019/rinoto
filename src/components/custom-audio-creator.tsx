@@ -10,7 +10,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 const MAX_DURATION = 3600; // 最大1時間（秒）
 
 const formatTime = (seconds) => {
-  if (isNaN(seconds) || seconds < 0) return '00:00:00';
+  if (Number.isNaN(seconds) || seconds < 0) {
+    return '00:00:00';
+  }
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = Math.floor(seconds % 60);
@@ -86,7 +88,7 @@ const Track = React.memo(({ track, audio, totalDuration, isSelected, onSelect, o
   return (
     <div
       ref={trackRef}
-      className={`absolute h-12 bg-teal-500 rounded-md cursor-move ${isSelected ? 'ring-2 ring-yellow-400' : ''}`}
+      className={`absolute h-12 cursor-move rounded-md bg-teal-500 ${isSelected ? 'ring-2 ring-yellow-400' : ''}`}
       style={{
         left: `${(track.startTime / totalDuration) * 100}%`,
         width: `${(track.duration / totalDuration) * 100}%`,
@@ -94,21 +96,15 @@ const Track = React.memo(({ track, audio, totalDuration, isSelected, onSelect, o
       }}
       onMouseDown={handleMouseDown}
     >
-      <div className="flex justify-between items-center h-full px-2 text-white text-xs">
-        <div
-          className="w-3 h-full bg-teal-700 cursor-ew-resize"
-          onMouseDown={(e) => handleResizeStart(e, 'left')}
-        ></div>
+      <div className="flex h-full items-center justify-between px-2 text-white text-xs">
+        <div className="h-full w-3 cursor-ew-resize bg-teal-700" onMouseDown={(e) => handleResizeStart(e, 'left')} />
         <span className="truncate">
           {audio.name} ({formatTime(track.duration)})
         </span>
-        <div
-          className="w-3 h-full bg-teal-700 cursor-ew-resize"
-          onMouseDown={(e) => handleResizeStart(e, 'right')}
-        ></div>
+        <div className="h-full w-3 cursor-ew-resize bg-teal-700" onMouseDown={(e) => handleResizeStart(e, 'right')} />
       </div>
       <button
-        className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full text-white flex items-center justify-center"
+        className="-top-2 -right-2 absolute flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white"
         onClick={() => onRemove(track.id)}
       >
         ×
@@ -166,7 +162,9 @@ const CustomAudioCreator = ({ presetAudios, userId }) => {
       const startTime = Math.floor(dropPosition * totalDuration);
 
       const audio = presetAudios.find((a) => a.id === audioId);
-      if (!audio) return;
+      if (!audio) {
+        return;
+      }
 
       const newTrack = {
         id: Date.now(),
@@ -206,11 +204,15 @@ const CustomAudioCreator = ({ presetAudios, userId }) => {
   }, []);
 
   const playTracks = useCallback(() => {
-    if (!audioContextRef.current) return;
+    if (!audioContextRef.current) {
+      return;
+    }
 
     tracks.forEach((track) => {
       const audio = presetAudios.find((a) => a.id === track.audioId);
-      if (!audio) return;
+      if (!audio) {
+        return;
+      }
 
       fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${audio.path}`)
         .then((response) => response.arrayBuffer())
@@ -241,7 +243,9 @@ const CustomAudioCreator = ({ presetAudios, userId }) => {
   }, [tracks, presetAudios, currentTime]);
 
   const updateCurrentTime = useCallback(() => {
-    if (!isPlaying) return;
+    if (!isPlaying) {
+      return;
+    }
 
     setCurrentTime((prevTime) => {
       const newTime = prevTime + 0.1; // Update every 100ms
@@ -311,8 +315,8 @@ const CustomAudioCreator = ({ presetAudios, userId }) => {
   }, [name, userId, totalDuration, tracks, toast]);
 
   return (
-    <div className="mt-8 p-6 bg-gray-100 rounded-lg shadow-lg">
-      <h3 className="text-2xl font-semibold mb-6">カスタム音源を作成</h3>
+    <div className="mt-8 rounded-lg bg-gray-100 p-6 shadow-lg">
+      <h3 className="mb-6 font-semibold text-2xl">カスタム音源を作成</h3>
       <Input
         type="text"
         value={name}
@@ -321,14 +325,14 @@ const CustomAudioCreator = ({ presetAudios, userId }) => {
         className="mb-6"
       />
       <div className="mb-6">
-        <h4 className="font-medium mb-3">プリセット音源:</h4>
-        <div className="flex flex-wrap gap-2 mb-4">
+        <h4 className="mb-3 font-medium">プリセット音源:</h4>
+        <div className="mb-4 flex flex-wrap gap-2">
           {presetAudios.map((audio) => (
             <div
               key={audio.id}
               draggable
               onDragStart={(e) => handleDragStart(e, audio.id)}
-              className="bg-teal-500 hover:bg-teal-600 text-white rounded-md px-3 py-2 cursor-move"
+              className="cursor-move rounded-md bg-teal-500 px-3 py-2 text-white hover:bg-teal-600"
             >
               {audio.name}
             </div>
@@ -336,10 +340,10 @@ const CustomAudioCreator = ({ presetAudios, userId }) => {
         </div>
       </div>
       <div className="mb-6">
-        <h4 className="font-medium mb-3">タイムライン: {formatTime(totalDuration)}</h4>
+        <h4 className="mb-3 font-medium">タイムライン: {formatTime(totalDuration)}</h4>
         <div
           ref={timelineRef}
-          className="h-32 bg-white relative rounded-md overflow-hidden shadow-inner"
+          className="relative h-32 overflow-hidden rounded-md bg-white shadow-inner"
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
@@ -358,12 +362,12 @@ const CustomAudioCreator = ({ presetAudios, userId }) => {
           <div
             className="absolute top-0 h-full w-0.5 bg-red-500"
             style={{ left: `${(currentTime / totalDuration) * 100}%` }}
-          ></div>
+          />
         </div>
       </div>
       {selectedTrack && (
         <div className="mb-6">
-          <h4 className="font-medium mb-3">音量:</h4>
+          <h4 className="mb-3 font-medium">音量:</h4>
           <Slider
             value={[tracks.find((t) => t.id === selectedTrack)?.volume || 1]}
             min={0}
@@ -373,17 +377,17 @@ const CustomAudioCreator = ({ presetAudios, userId }) => {
           />
         </div>
       )}
-      <div className="flex justify-between items-center mb-6">
-        <div className="text-lg font-medium">
+      <div className="mb-6 flex items-center justify-between">
+        <div className="font-medium text-lg">
           {formatTime(currentTime)} / {formatTime(totalDuration)}
         </div>
-        <Button onClick={handlePlayPause} className="bg-blue-500 hover:bg-blue-600 text-white rounded-md">
+        <Button onClick={handlePlayPause} className="rounded-md bg-blue-500 text-white hover:bg-blue-600">
           {isPlaying ? <Pause size={20} /> : <Play size={20} />}
         </Button>
       </div>
       <Button
         onClick={handleCreateCustomAudio}
-        className="w-full bg-green-500 hover:bg-green-600 text-white rounded-md py-3 text-lg font-semibold"
+        className="w-full rounded-md bg-green-500 py-3 font-semibold text-lg text-white hover:bg-green-600"
       >
         カスタム音源を作成
       </Button>

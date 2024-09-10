@@ -13,8 +13,11 @@
   },
   "dependencies": {
     "@biomejs/biome": "1.8.3",
+    "@heroicons/react": "2.1.5",
     "@prisma/client": "5.18.0",
+    "@radix-ui/react-avatar": "1.1.0",
     "@radix-ui/react-checkbox": "1.1.1",
+    "@radix-ui/react-dropdown-menu": "2.1.1",
     "@radix-ui/react-navigation-menu": "1.2.0",
     "@radix-ui/react-select": "2.1.1",
     "@radix-ui/react-slider": "1.2.0",
