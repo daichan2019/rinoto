@@ -3,7 +3,7 @@ import type { PresetAudio } from '@prisma/client';
 
 export async function getPresetAudios(): Promise<{
   data?: Pick<PresetAudio, 'name' | 'path'>[];
-  error?: string;
+  error?: string | null;
 }> {
   try {
     const presetAudios = await prisma.presetAudio.findMany({
@@ -14,13 +14,18 @@ export async function getPresetAudios(): Promise<{
       },
     });
 
+    if (!presetAudios || presetAudios.length === 0) {
+      return {
+        error: 'プリセットオーディオが見つかりませんでした',
+      };
+    }
+
     return {
       data: presetAudios,
     };
-  } catch (error) {
-    console.error(error);
+  } catch (_error) {
     return {
-      error: 'データの取得に失敗しました',
+      error: 'プリセットオーディオの取得に失敗しました',
     };
   }
 }
