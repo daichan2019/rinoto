@@ -1,5 +1,6 @@
 import { getPresetAudios } from '@/actions/get-preset-audios';
 import { AudioCard } from '@/components/audio-card';
+import { CustomAudioCreator } from '@/components/custom-audio-creator';
 
 export default async function Page(): Promise<JSX.Element> {
   const { data: presetAudios } = await getPresetAudios();
@@ -12,6 +13,7 @@ export default async function Page(): Promise<JSX.Element> {
           <AudioCard key={audio.name} {...audio} />
         ))}
       </div>
+      <CustomAudioCreator />
     </div>
   );
 }
