@@ -1,31 +1,35 @@
-import prisma from '@/lib/prisma';
+import { createClient } from '@/lib/supabase/server';
 import type { PresetAudio } from '@prisma/client';
 
-export async function getPresetAudios(): Promise<{
-  data?: Pick<PresetAudio, 'name' | 'path'>[];
-  error?: string | null;
-}> {
-  try {
-    const presetAudios = await prisma.presetAudio.findMany({
-      orderBy: { id: 'asc' },
-      select: {
-        name: true,
-        path: true,
-      },
-    });
+type PresetAudioType = Pick<PresetAudio, 'name'> & { url: string };
 
-    if (!presetAudios || presetAudios.length === 0) {
-      return {
-        error: 'プリセットオーディオが見つかりませんでした',
-      };
-    }
+export async function getPresetAudios(): Promise<{ data: PresetAudioType[] }> {
+  const supabase = createClient();
+  const { data: files } = await supabase.storage.from('preset-audios').list();
 
-    return {
-      data: presetAudios,
-    };
-  } catch (_error) {
-    return {
-      error: 'プリセットオーディオの取得に失敗しました',
-    };
+  if (!files || files.length === 0) {
+    return { data: [] };
   }
+
+  const presetAudios = await Promise.all(
+    files.map(async (file) => {
+      const { data: urlData, error: urlError } = await supabase.storage
+        .from('preset-audios')
+        .createSignedUrl(file.name, 3600);
+
+      if (urlError) {
+        console.error(`Error creating signed URL for ${file.name}:`, urlError);
+        return null;
+      }
+
+      return {
+        name: file.name,
+        url: urlData.signedUrl,
+      };
+    }),
+  );
+
+  const validPresetAudios = presetAudios.filter((audio): audio is NonNullable<typeof audio> => audio !== null);
+
+  return { data: validPresetAudios };
 }
