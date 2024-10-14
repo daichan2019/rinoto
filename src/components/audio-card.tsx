@@ -1,6 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Music, Pause, Play } from 'lucide-react';
 import { useState } from 'react';
 
@@ -9,7 +10,12 @@ type PresetAudio = {
   url: string;
 };
 
-export function AudioCard({ name, url }: PresetAudio): JSX.Element {
+type AudioCardProps = PresetAudio & {
+  isSelected: boolean;
+  onToggleSelect: (name: string) => void;
+};
+
+export function AudioCard({ name, url, isSelected, onToggleSelect }: AudioCardProps): JSX.Element {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const togglePlay = () => {
@@ -22,8 +28,14 @@ export function AudioCard({ name, url }: PresetAudio): JSX.Element {
     setIsPlaying(!isPlaying);
   };
 
+  const handleSelectToggle = () => {
+    onToggleSelect(name);
+  };
+
   return (
-    <Card className="w-full transition-shadow duration-300 hover:shadow-lg">
+    <Card
+      className={`relative w-full transition-shadow duration-300 hover:shadow-lg ${isSelected ? 'ring-2 ring-primary' : ''}`}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="truncate font-medium text-sm">{name}</CardTitle>
         <Music className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
@@ -44,6 +56,14 @@ export function AudioCard({ name, url }: PresetAudio): JSX.Element {
           Your browser does not support the audio element.
         </audio>
       </CardContent>
+      <div className="absolute right-2 top-2">
+        <Checkbox
+          id={`select-${name}`}
+          checked={isSelected}
+          onCheckedChange={handleSelectToggle}
+          aria-label={`Select ${name}`}
+        />
+      </div>
     </Card>
   );
 }
