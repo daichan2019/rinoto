@@ -56,7 +56,7 @@ export function AudioCard({ name, url, isSelected, onToggleSelect }: AudioCardPr
           Your browser does not support the audio element.
         </audio>
       </CardContent>
-      <div className="absolute right-2 top-2">
+      <div className="absolute top-2 right-2">
         <Checkbox
           id={`select-${name}`}
           checked={isSelected}
