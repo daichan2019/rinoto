@@ -76,7 +76,6 @@ export function CustomAudioPreview({ selectedPresets, isVisible }: CustomAudioPr
             <span>{formatTime(PREVIEW_DURATION)}</span>
           </div>
         </div>
-
         <div className="flex items-center space-x-2">
           <Button
             variant="ghost"
